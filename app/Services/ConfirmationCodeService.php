@@ -7,11 +7,13 @@ use Carbon\Carbon;
 
 class ConfirmationCodeService
 {
-    private int $liveTimeCode;
+    public int $liveTimeCode;
+    public int $delayTimeCode;
 
     public function __construct()
     {
         $this->liveTimeCode = 360;
+        $this->delayTimeCode = 360;
     }
 
     private function generateCode(int $codeLength): string
@@ -54,22 +56,40 @@ class ConfirmationCodeService
         return  $updatedTimestamp + $this->liveTimeCode > $nowTimestamp;
     }
 
+    private function checkIsDelayCode(ConfirmationCode $confirmationCode): bool
+    {
+        $updatedDate = $confirmationCode->updated_at;
+        $updatedTimestamp = Carbon::parse($updatedDate)->timestamp;
+        $nowTimestamp = Carbon::now()->timestamp;
+
+        return  $updatedTimestamp + $this->delayTimeCode > $nowTimestamp;
+    }
+
     private function getEmailCode($email, $confirmType)
     {
         return ConfirmationCode::where(['email' => $email, 'type' => $confirmType])->first();
     }
 
-    private function checkEmailCode(string $confirmType, string $email, string $confirmCode): array
+    private function checkEmailCode
+    (
+        string $confirmType,
+        string $email,
+        string|null $confirmCode = null
+    ): array
     {
         $dataCode = $this->getEmailCode($email, $confirmType);
 
-        if (!$dataCode) {
-            throw new \Exception('код подтверждения не найден', 404);
-        }
-        $live = $this->checkIsLiveCode($dataCode);
-        $matches =  $dataCode->code === $confirmCode;
+        $live = false;
+        $delay = false;
+        $matches = false;
 
-        return array('live' => $live, 'matches' => $matches);
+        if ($dataCode) {
+            $live = $this->checkIsLiveCode($dataCode);
+            $delay = $this->checkIsDelayCode($dataCode);
+            $matches =  $dataCode->code === $confirmCode;
+        }
+
+        return array('live' => $live, 'delay' => $delay, 'matches' => $matches);
     }
 
     private function checkPhoneCode(int $phone, string $confirmCode): array
@@ -92,7 +112,7 @@ class ConfirmationCodeService
         string $type,
         string $confirmType,
         string $address,
-        string $confirmCode
+        null|string $confirmCode = null
     )
     {
         switch ($type) {

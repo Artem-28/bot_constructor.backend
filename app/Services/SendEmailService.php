@@ -15,6 +15,8 @@ class SendEmailService
             case ConfirmationCode::REGISTRATION_TYPE:
                 $this->sendConfirmRegistrationMessage($toEmail, $code);
                 break;
+            default:
+                break;
         }
     }
 

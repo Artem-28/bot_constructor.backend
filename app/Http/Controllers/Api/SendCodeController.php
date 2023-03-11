@@ -25,10 +25,16 @@ class SendCodeController extends Controller
 
     public function sendCode(Request $request): \Illuminate\Http\JsonResponse
     {
-        return $this->successResponse(null, "Код подтверждения отправлен на email");
         try {
             $email = $request->get('email');
             $confirmType = $request->get('type');
+
+            $checkCode = $this->confirmationCodeService->checkCode(ConfirmationCode::EMAIL_CODE, $confirmType, $email);
+
+            if ($checkCode['delay']) {
+                $delayValue = $this->confirmationCodeService->delayTimeCode;
+                return $this->errorResponse('Интервал между отправкой должен быть не менее ' . $delayValue . 'сек.', 404);
+            }
 
             $code = $this->confirmationCodeService->createCode(ConfirmationCode::EMAIL_CODE, $confirmType, $email);
 
