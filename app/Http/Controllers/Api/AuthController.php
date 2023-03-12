@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ConfirmationCode;
 use App\Services\AccountService;
+use App\Services\AccountTypeService;
 use App\Services\ConfirmationCodeService;
 use App\Services\ProfileService;
 use App\Services\RoleService;
@@ -15,30 +16,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use League\Fractal\Resource\Item;
+use phpDocumentor\Reflection\Types\This;
 
 class AuthController extends Controller
 {
 
     public AccountService $accountService;
+    public AccountTypeService $accountTypeService;
     public ProfileService $profileService;
     public UserService $userService;
-    public RoleService $roleService;
     public ConfirmationCodeService $confirmationCodeService;
 
     public function __construct
     (
         AccountService $accountService,
+        AccountTypeService $accountTypeService,
         ProfileService $profileService,
         UserService $userService,
-        RoleService $roleService,
         ConfirmationCodeService $confirmationCodeService
 
     )
     {
         $this->accountService = $accountService;
+        $this->accountTypeService = $accountTypeService;
         $this->profileService = $profileService;
         $this->userService = $userService;
-        $this->roleService = $roleService;
         $this->confirmationCodeService = $confirmationCodeService;
     }
 
@@ -47,9 +49,12 @@ class AuthController extends Controller
         try {
             $accountData = $request->input('account', []);
             $profileData = $request->input('profile', []);
-            $userData = $request->only(['email', 'password']);
-            $rolesData = $request->get('roles');
+            $userData = $request->only(['email', 'password', 'licenseAgreement']);
             $confirmCode = $request->get('code');
+
+            if (!$userData['licenseAgreement']) {
+                return $this->errorResponse('Не приняты условия лицинзионного соглашения');
+            }
 
             $checkCode = $this->confirmationCodeService->checkCode
             (
@@ -69,11 +74,11 @@ class AuthController extends Controller
 
             $userData['email_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
 
-            DB::transaction(function () use ($accountData, $profileData, $userData, $rolesData) {
+            DB::transaction(function () use ($accountData, $profileData, $userData) {
 
                 $user = $this->userService->create($userData);
-                $this->roleService->assignRoles($user, $rolesData);
-                $this->accountService->create($accountData, $user);
+                $account = $this->accountService->create($accountData, $user);
+                $this->accountTypeService->assignTypesToAccount($account, $accountData['accountTypes']);
                 $this->profileService->create($profileData, $user);
             });
             return $this->successResponse(null, 'Регистрация завершена');
@@ -87,7 +92,6 @@ class AuthController extends Controller
 
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {
-        dd('test');
         $data = $request->only('email', 'password');
         $user = $this->userService->getUserByEmail($data['email']);
 
@@ -104,5 +108,38 @@ class AuthController extends Controller
             'user' => $this->createData($resource)
         );
         return $this->successResponse($data);
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $email = $request->get('email');
+            $password = $request->get('password');
+            $confirmCode = $request->get('code');
+
+            $checkCode = $this->confirmationCodeService->checkCode
+            (
+                ConfirmationCode::EMAIL_CODE,
+                ConfirmationCode::CHANGE_PASSWORD_TYPE,
+                $email,
+                $confirmCode
+            );
+
+            if (!$checkCode['live']) {
+                return $this->errorResponse('Срок действия кода подтверждения истек', 404);
+            }
+
+            if (!$checkCode['matches']) {
+                return $this->errorResponse('Код подтверждения введен не верно', 404);
+            }
+
+            $this->userService->changePassword($email, $password);
+            return $this->successResponse(null, 'Пароль успешно изменен');
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            $this->errorResponse($message);
+        }
+
     }
 }

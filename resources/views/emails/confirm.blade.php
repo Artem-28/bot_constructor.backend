@@ -1,1 +1,1 @@
-<p>Ваш код подтверждения: <strong>{{$code}}</strong> </p>
+<p>{{$content}} <strong>{{$code}}</strong> </p>

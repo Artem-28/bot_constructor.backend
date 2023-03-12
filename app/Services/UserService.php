@@ -15,6 +15,7 @@ class UserService
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'email_verified_at' =>$data['email_verified_at'],
+            'license_agreement' =>$data['licenseAgreement'],
         ]);
         $user->save();
 
@@ -50,6 +51,12 @@ class UserService
                     $query->whereIn('slug', $arrayRoles);
             })->get();
 
+    }
+
+    public function changePassword($login, $password)
+    {
+        $newPassword = bcrypt($password);
+        return User::where('email', $login)->update(['password' => $newPassword]);
     }
 
 }

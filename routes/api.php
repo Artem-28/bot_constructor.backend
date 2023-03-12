@@ -20,7 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('auth/registration', [\App\Http\Controllers\Api\AuthController::class, 'registration']);
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
-Route::post('sendCode', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
+Route::patch('auth/change_password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
+Route::post('send_code', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
 
 Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherController::class, 'addToAccount']);
 Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);
@@ -34,6 +35,5 @@ Route::delete('dialog-group/{group}/remove-user', [\App\Http\Controllers\Api\Dia
 
 Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::class);
 
-Route::post('test', function () {
-    return "test";
-});
+// Опции для селекторов
+Route::get('options/account_type', [\App\Http\Controllers\Api\OptionsController::class, 'accountTypeOptions']);

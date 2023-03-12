@@ -21,6 +21,10 @@ class Account extends Model
         'description',
     ];
 
+    protected $with = [
+        'accountTypes',
+    ];
+
     public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Attachment::class);
@@ -30,5 +34,10 @@ class Account extends Model
     public function teachers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'teachers');
+    }
+
+    public function accountTypes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(AccountType::class, 'account_account_types','account_id', 'type', 'id', 'code');
     }
 }

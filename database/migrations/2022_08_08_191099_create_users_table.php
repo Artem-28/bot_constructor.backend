@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->integer('phone')->nullable();
             $table->string('password');
+            $table->boolean('license_agreement')->default(false);
             $table->dateTime('email_verified_at')->nullable();
             $table->dateTime('phone_verified_at')->nullable();
             $table->dateTime('last_active_at')->nullable();
