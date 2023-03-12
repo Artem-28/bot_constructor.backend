@@ -31,7 +31,7 @@ class SendEmailService
         $message = new EmailMessage($data);
 
         $message->to($toEmail)
-            ->subject('Подтверждение регистрации')
+            ->subject('Изменение пароля')
             ->view('emails.confirm')
             ->send();
     }
