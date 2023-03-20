@@ -15,6 +15,12 @@ class AccountService
         return $user->account()->save($account);
     }
 
+    public function updateUserAccount(User $user, $data)
+    {
+        $user->account()->update($data);
+        return $user->account;
+    }
+
     public function getAccountById(int $accountId): Account
     {
         return Account::find($accountId);
