@@ -78,7 +78,7 @@ class AuthController extends Controller
 
                 $user = $this->userService->create($userData);
                 $account = $this->accountService->create($accountData, $user);
-                $this->accountTypeService->assignTypesToAccount($account, $accountData['accountTypes']);
+                $this->accountTypeService->assignTypesToAccount($account, $accountData['types']);
                 $this->profileService->create($profileData, $user);
             });
             return $this->successResponse(null, 'Регистрация завершена');

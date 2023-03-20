@@ -23,6 +23,9 @@ Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'log
 Route::patch('auth/change_password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
 Route::post('send_code', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
 
+// Account
+Route::patch('account', [\App\Http\Controllers\Api\AccountController::class, 'update']);
+
 Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherController::class, 'addToAccount']);
 Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);
 Route::delete('teacher/remove-from-account', [\App\Http\Controllers\Api\TeacherController::class, 'removeFromAccount']);
