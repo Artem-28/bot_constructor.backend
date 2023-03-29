@@ -45,4 +45,10 @@ class CourseService
     {
         return Course::with('subCourses')->find($courseId);
     }
+
+    // Добавляет категории к курсу
+    public function assignCategories(Course $course, array $codeCategories): array
+    {
+        return $course->categories()->sync($codeCategories);
+    }
 }

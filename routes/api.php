@@ -44,3 +44,4 @@ Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::cl
 
 // Опции для селекторов
 Route::get('options/account_type', [\App\Http\Controllers\Api\OptionsController::class, 'accountTypeOptions']);
+Route::get('options/course_category', [\App\Http\Controllers\Api\OptionsController::class, 'courseCategoriesOptions']);

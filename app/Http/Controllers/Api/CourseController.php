@@ -27,7 +27,13 @@ class CourseController extends Controller
         try {
             $courseData = $request->only(['title', 'description', 'order', 'parentCourseId', 'subCourses']);
             $accountId = $request->get('accountId');
+            $categoriesData = $request->get('categories');
+
             $course = $this->courseService->create($accountId, $courseData);
+
+            if ($categoriesData) {
+                $this->courseService->assignCategories($course, $categoriesData);
+            }
 
             $resource = new Item($course, new CourseTransformer('subCourses'));
             $data = $this->createData($resource);
@@ -46,7 +52,7 @@ class CourseController extends Controller
         try {
             $course = $this->courseService->getCourseById($id);
 
-            $resource = new Item($course, new CourseTransformer('subCourses'));
+            $resource = new Item($course, new CourseTransformer( 'categoryCodes'));
             $data = $this->createData($resource);
             return $this->successResponse($data);
 
