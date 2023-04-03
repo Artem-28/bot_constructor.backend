@@ -30,6 +30,12 @@ Route::patch('account', [\App\Http\Controllers\Api\AccountController::class, 'up
 Route::post('courses', [\App\Http\Controllers\Api\CourseController::class, 'create']);
 Route::get('courses/{id}', [\App\Http\Controllers\Api\CourseController::class, 'show']);
 
+// Test
+Route::get('test/{id}', [\App\Http\Controllers\Api\TestController::class, 'show']);
+Route::post('test', [\App\Http\Controllers\Api\TestController::class, 'create']);
+Route::patch('test/{id}', [\App\Http\Controllers\Api\TestController::class, 'update']);
+Route::delete('test/{id}', [\App\Http\Controllers\Api\TestController::class, 'delete']);
+
 Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherController::class, 'addToAccount']);
 Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);
 Route::delete('teacher/remove-from-account', [\App\Http\Controllers\Api\TeacherController::class, 'removeFromAccount']);
