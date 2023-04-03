@@ -37,4 +37,21 @@ class OptionsController extends Controller
             return $this->errorResponse($message);
         }
     }
+
+    // Получение списка категорий для курсов с фильтрацией по code
+    public function courseCategoriesOptions(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $code = $request->query('code');
+            $type = OptionsService::COURSE_CATEGORY_OPTIONS;
+            $options = $this->optionsService->getOptions($type, $code);
+            $data = $this->optionFactory->transformOptions($type, $options);
+
+            return $this->successResponse($data);
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
+    }
 }

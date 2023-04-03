@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\AccountType;
 use Illuminate\Database\Seeder;
 
-class AccountTypeTableSeeder extends Seeder
+class UseAccountTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
