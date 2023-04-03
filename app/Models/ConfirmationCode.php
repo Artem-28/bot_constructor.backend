@@ -21,7 +21,8 @@ class ConfirmationCode extends Model
 
     const EMAIL_CODE = 'email_code';
     const PHONE_CODE = 'phone_code';
-    const REGISTRATION_TYPE = 'registration_code';
+    const REGISTRATION_TYPE = 'registration';
+    const CHANGE_PASSWORD_TYPE = 'change_password';
 
     protected $fillable = [
         'email',

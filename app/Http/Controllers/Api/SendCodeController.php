@@ -40,7 +40,12 @@ class SendCodeController extends Controller
 
             $this->sendEmailService->sendConfirmMessage($confirmType, $email, $code);
 
-            return $this->successResponse(null, "Код подтверждения отправлен на email");
+            $data = array(
+                'live' => $this->confirmationCodeService->liveTimeCode,
+                'delay' => $this->confirmationCodeService->delayTimeCode,
+            );
+
+            return $this->successResponse($data, "Код подтверждения отправлен на email");
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();

@@ -15,14 +15,31 @@ class SendEmailService
             case ConfirmationCode::REGISTRATION_TYPE:
                 $this->sendConfirmRegistrationMessage($toEmail, $code);
                 break;
+            case ConfirmationCode::CHANGE_PASSWORD_TYPE:
+                $this->sendConfirmChangePasswordMessage($toEmail, $code);
+                break;
             default:
                 break;
         }
     }
 
-    public function sendConfirmRegistrationMessage(string $toEmail, string $code)
+    private function sendConfirmChangePasswordMessage(string $toEmail, string $code)
     {
-        $data = array('code'=> $code);
+        $appName = env('APP_NAME');
+        $data = array('code'=> $code, 'content' => "Код, для изменения пароля в приложении $appName:");
+
+        $message = new EmailMessage($data);
+
+        $message->to($toEmail)
+            ->subject('Изменение пароля')
+            ->view('emails.confirm')
+            ->send();
+    }
+
+    private function sendConfirmRegistrationMessage(string $toEmail, string $code)
+    {
+        $appName = env('APP_NAME');
+        $data = array('code'=> $code, 'content' => "Код, для подтверждения регистрации в приложении $appName:");
 
         $message = new EmailMessage($data);
 

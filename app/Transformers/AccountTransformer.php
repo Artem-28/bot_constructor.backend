@@ -7,6 +7,10 @@ use League\Fractal\TransformerAbstract;
 
 class AccountTransformer extends TransformerAbstract
 {
+    protected array $defaultIncludes = [
+        'types',
+    ];
+
     public function transform(Account $account): array
     {
         return [
@@ -15,5 +19,11 @@ class AccountTransformer extends TransformerAbstract
             'title' => $account->title,
             'description' => $account->description
         ];
+    }
+
+    public function includeTypes(Account $account)
+    {
+        $accountTypes = $account->accountTypes;
+        return $this->collection($accountTypes, new AccountTypeTransformer());
     }
 }

@@ -99,12 +99,12 @@ class ConfirmationCodeService
 
     public function createCode(string $type, string $confirmType, string $address)
     {
-        switch ($type) {
-            case ConfirmationCode::EMAIL_CODE:
-                return $this->saveEmailCode($confirmType, $address);
-            case ConfirmationCode::PHONE_CODE:
-                return $this->savePhoneCode($address);
-        }
+
+        return match ($type) {
+            ConfirmationCode::EMAIL_CODE => $this->saveEmailCode($confirmType, $address),
+            ConfirmationCode::PHONE_CODE => $this->savePhoneCode($address),
+            default => null,
+        };
     }
 
     public function checkCode
@@ -115,11 +115,11 @@ class ConfirmationCodeService
         null|string $confirmCode = null
     )
     {
-        switch ($type) {
-            case ConfirmationCode::EMAIL_CODE:
-                return $this->checkEmailCode($confirmType, $address, $confirmCode);
-            case ConfirmationCode::PHONE_CODE:
-                return $this->checkPhoneCode($address, $confirmCode);
-        }
+
+        return match ($type) {
+            ConfirmationCode::EMAIL_CODE => $this->checkEmailCode($confirmType, $address, $confirmCode),
+            ConfirmationCode::PHONE_CODE => $this->checkPhoneCode($address, $confirmCode),
+            default => null,
+        };
     }
 }
