@@ -4,30 +4,41 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\GroupQuestionService;
-use App\Services\QuestionService;
 use Illuminate\Http\Request;
 
-class QuestionController extends Controller
+class QuestionGroupController extends Controller
 {
-    private QuestionService $questionService;
     private GroupQuestionService $groupQuestionService;
 
     public function __construct
     (
-        QuestionService $questionService,
         GroupQuestionService $groupQuestionService,
     )
     {
         $this->middleware(['auth:sanctum']);
-        $this->questionService = $questionService;
         $this->groupQuestionService = $groupQuestionService;
     }
-    public function create(Request $request)
+    // Создает вопрос в новой группе или уже в существующей группе
+    public function createQuestion(Request $request)
     {
         try {
             $testId = $request->get('testId');
-            $prevGroupId = $request->get('prevGroupId');
-            $group = $this->groupQuestionService->create($testId, $prevGroupId);
+            $groupData = $request->only(['prevGroupId', 'groupId']);
+            $questionData = $request->only(['type', 'text', 'prevQuestionId']);
+
+            $this->groupQuestionService->createTestQuestion($testId, $groupData, $questionData);
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
+    }
+
+    public function updateQuestion(Request $request, int $questionId)
+    {
+        try {
+            $questionData = $request->only(['groupId', 'prevQuestionId', 'text']);
+            $this->groupQuestionService->updateQuestion($questionId, $questionData);
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
@@ -53,6 +64,19 @@ class QuestionController extends Controller
         try {
             $this->groupQuestionService->deleteQuestionGroup($groupId);
             return $this->successResponse(null, 'Группа успешно удалена');
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
+    }
+
+    // Удаление вопроса
+    public function deleteQuestion(int $questionId): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $this->groupQuestionService->deleteQuestion($questionId);
+            return $this->successResponse(null, 'Вопрос успешно удален');
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();

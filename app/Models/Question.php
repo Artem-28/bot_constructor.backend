@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\Question
  *
  * @property int $id
- * @property int $test_id
+ * @property int $group_id
  * @property int $prev_id
  * @property int $next_id
  * @property string $text
@@ -25,7 +25,7 @@ class Question extends Model
 
     protected $fillable = [
         'id',
-        'test_id',
+        'group_id',
         'prev_id',
         'next_id',
         'type',
@@ -41,15 +41,20 @@ class Question extends Model
         return (bool) $this->prev_id;
     }
 
-    // Предыдущий вопрос
-    public function prevQuestion(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasOne(Question::class, 'prev_id');
+        return $this->belongsTo(GroupQuestion::class, 'group_id');
+    }
+
+    // Предыдущий вопрос
+    public function prevQuestion(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Question::class, 'prev_id');
     }
 
     // Следующий вопрос
     public function nextQuestion(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Question::class, 'next_id', 'id' );
+        return $this->belongsTo(Question::class, 'next_id' );
     }
 }

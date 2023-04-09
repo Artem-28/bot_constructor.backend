@@ -35,4 +35,9 @@ class GroupQuestion extends Model
     {
         return $this->belongsTo(GroupQuestion::class, 'prev_id');
     }
+
+    public function questions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Question::class, 'group_id');
+    }
 }
