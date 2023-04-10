@@ -37,11 +37,13 @@ Route::patch('test/{id}', [\App\Http\Controllers\Api\TestController::class, 'upd
 Route::delete('test/{id}', [\App\Http\Controllers\Api\TestController::class, 'delete']);
 
 // QuestionGroup
-Route::post('question-group/question', [\App\Http\Controllers\Api\QuestionGroupController::class, 'createQuestion']);
-Route::patch('question-group/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'updatePositionQuestionGroup']);
-Route::patch('question-group/question/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'updateQuestion']);
+Route::post('question', [\App\Http\Controllers\Api\QuestionGroupController::class, 'createQuestion']);
+Route::get('test/{id}/question', [\App\Http\Controllers\Api\QuestionGroupController::class, 'indexQuestion']);
+Route::patch('question/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'updateQuestion']);
+Route::patch('question/{id}/position', [\App\Http\Controllers\Api\QuestionGroupController::class, 'updateQuestionPosition']);
+Route::delete('question/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'deleteQuestion']);
+Route::patch('question-group/{id}/position', [\App\Http\Controllers\Api\QuestionGroupController::class, 'updateQuestionGroupPosition']);
 Route::delete('question-group/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'deleteQuestionGroup']);
-Route::delete('question-group/question/{id}', [\App\Http\Controllers\Api\QuestionGroupController::class, 'deleteQuestion']);
 
 Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherController::class, 'addToAccount']);
 Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);

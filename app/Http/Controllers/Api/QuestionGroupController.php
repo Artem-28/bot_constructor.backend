@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\GroupQuestion;
 use App\Services\GroupQuestionService;
+use App\Transformers\GroupQuestionTransformer;
 use Illuminate\Http\Request;
+use League\Fractal\Resource\Collection;
 
 class QuestionGroupController extends Controller
 {
@@ -17,6 +20,18 @@ class QuestionGroupController extends Controller
     {
         $this->middleware(['auth:sanctum']);
         $this->groupQuestionService = $groupQuestionService;
+    }
+    public function indexQuestion(Request $request, int $testId) {
+        try {
+            $groups = $this->groupQuestionService->getTestQuestions($testId);
+            $resource = new Collection($groups, new GroupQuestionTransformer('questions'));
+            $data = $this->createData($resource);
+            return $this->successResponse($data);
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
     }
     // Создает вопрос в новой группе или уже в существующей группе
     public function createQuestion(Request $request)
@@ -34,6 +49,7 @@ class QuestionGroupController extends Controller
         }
     }
 
+    // Обновление вопроса
     public function updateQuestion(Request $request, int $questionId)
     {
         try {
@@ -46,7 +62,21 @@ class QuestionGroupController extends Controller
         }
     }
 
-    public function updatePositionQuestionGroup(Request $request, int $groupId)
+    // Перенос вопроса в другую группу или изменение позиции в группе
+    public function updateQuestionPosition(Request $request, int $questionId)
+    {
+        try {
+            $groupId = $request->get('groupId');
+            $prevQuestionId = $request->get('prevQuestionId');
+            $question = $this->groupQuestionService->updateQuestionPosition($questionId, $groupId, $prevQuestionId);
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
+    }
+
+    // Обновление позиции группы
+    public function updateQuestionGroupPosition(Request $request, int $groupId)
     {
         try {
             $prevGroupId = $request->get('prevGroupId');

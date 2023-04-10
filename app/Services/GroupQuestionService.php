@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\DB;
 
 class GroupQuestionService
 {
+    // TODO вынести в helpers
+    private function sortedByRelatedKeys($data, string $relatedKey, $startValue = null): array
+    {
+        $result = [];
+        foreach ($data as $item) {
+            if ($item[$relatedKey] === $startValue) {
+                // Добавляем текущий элемент в результирующий массив
+                $result[] = $item;
+                $result = array_merge($result, $this->sortedByRelatedKeys($data, $relatedKey, $item['id']));
+            }
+        }
+
+        return $result;
+    }
+
     public function createTestQuestion(int $testId, array $groupData, array $questionData)
     {
         return DB::transaction(function () use ($testId, $groupData, $questionData) {
@@ -32,6 +47,9 @@ class GroupQuestionService
         });
     }
 
+    /**
+     * @throws \Exception
+     */
     private function createGroup(int $testId, int | null $prevGroupId = null): GroupQuestion
     {
         $group = new GroupQuestion([
@@ -147,7 +165,7 @@ class GroupQuestionService
     }
 
     // Вставляет вопрос между вопросов либо в конец (не вставляет в начало т.е как стартовый)
-    private function insertBetweenQuestions(Question $question, int $prevQuestionId)
+    private function insertBetweenQuestions(Question $question, int $prevQuestionId): Question
     {
         $prevQuestion = $this->getQuestionById($prevQuestionId, 'nextQuestion');
         // Если предыдущей группы не найдено выкидываем исключение
@@ -179,6 +197,7 @@ class GroupQuestionService
     // Соеденяет две группы
     private function connectGroup(GroupQuestion | null $prevGroup, GroupQuestion | null $nextGroup): void
     {
+        if (!$nextGroup && !$prevGroup) return;
         // Если нет следующей группы
         if (!$nextGroup) {
             // У предыдущей удаляем связь со следующей
@@ -204,6 +223,8 @@ class GroupQuestionService
     // Соединяет два вопроса
     private function connectQuestions(Question | null $prevQuestion, Question | null $nextQuestion): void
     {
+        if (!$nextQuestion && !$prevQuestion) return;
+
         if (!$nextQuestion) {
             $prevQuestion->nextQuestion()->dissociate();
             $prevQuestion->save();
@@ -252,6 +273,7 @@ class GroupQuestionService
             ->first();
     }
 
+    // Обновление вопроса
     public function updateQuestion(int $questionId, array $questionData)
     {
         $question = $this->getQuestionById($questionId);
@@ -265,25 +287,25 @@ class GroupQuestionService
             $question->text = $questionData['text'];
         }
 
-        $isChangeGroupId = array_key_exists('groupId', $questionData) && $questionData['groupId'] !== $question->group_id;
-        $isChangePrevId = array_key_exists('prevQuestionId', $questionData) && $questionData['prevQuestionId'] !== $question->prev_id;
-
-        if (!$isChangeGroupId && !$isChangePrevId) {
-            $question->save();
-            return $question;
-        }
-
-        $groupId = $isChangeGroupId ? $questionData['groupId'] : $question->group_id;
-        $prevQuestionId = $isChangePrevId ? $questionData['prevQuestionId'] : $question->prev_id;
-
-        return $this->updateQuestionPosition($question, $groupId, $prevQuestionId);
-
+        $question->save();
+        return $question;
     }
 
     // Обновление позиции вопроса изменение варианта или изменение группы
-    public function updateQuestionPosition(Question $question, int $groupId, int | null $prevQuestionId)
+    public function updateQuestionPosition(int $questionId, int $groupId, int | null $prevQuestionId)
     {
-        return DB::transaction(function () use ($question, $groupId, $prevQuestionId) {
+        $question = $this->getQuestionById($questionId, 'prevQuestion', 'nextQuestion');
+
+        if (!$question) {
+            $message = 'Вопрос с id ' . $questionId . ' не найдена';
+            return throw new \Exception($message, 404);
+        }
+
+        // Если нет ни предыдущего ни следующего вопроса то текущая группа остается пустой
+        $isEmptyGroup = !$question->prevQuestion && !$question->nextQuestion;
+        $prevGroupId = $question->group_id;
+
+        $question = DB::transaction(function () use ($question, $groupId, $prevQuestionId) {
             $prevQuestion = $question->prevQuestion;
             $nextQuestion = $question->nextQuestion;
             $question->group_id = $groupId;
@@ -297,6 +319,13 @@ class GroupQuestionService
 
             return $this->insertBetweenQuestions($question, $prevQuestionId);
         });
+
+        if ($isEmptyGroup) {
+            // Удаляем пустую группу
+            $this->deleteQuestionGroup($prevGroupId);
+        }
+
+        return $question;
     }
 
     public function updateGroupPosition(int $groupId, int | null $prevGroupId): GroupQuestion
@@ -354,5 +383,16 @@ class GroupQuestionService
             $this->connectQuestions($prevQuestion, $nextQuestion);
             $question->delete();
         });
+    }
+
+    public function getTestQuestions(int $testId): array
+    {
+        $questions = GroupQuestion::query()
+            ->with('questions')
+            ->where('test_id', $testId)
+            ->orderBy('prev_id')
+            ->get();
+
+        return $this->sortedByRelatedKeys($questions, 'prev_id');
     }
 }
