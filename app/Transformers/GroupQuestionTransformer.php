@@ -26,6 +26,11 @@ class GroupQuestionTransformer extends TransformerAbstract
 
     public function includeQuestions(GroupQuestion $group)
     {
+        return $this->collection($group->questions, new QuestionTransformer());
+    }
+
+    public function includeSortedQuestions(GroupQuestion $group)
+    {
         return $this->collection($group->sortedQuestions, new QuestionTransformer());
     }
 }

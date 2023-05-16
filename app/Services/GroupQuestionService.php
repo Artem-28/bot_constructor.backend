@@ -6,7 +6,7 @@ use App\Models\GroupQuestion;
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
 
-class GroupQuestionService
+class GroupQuestionService extends BaseService
 {
     // TODO вынести в helpers
     private function sortedByRelatedKeys($data, string $relatedKey, $startValue = null): array
@@ -32,7 +32,9 @@ class GroupQuestionService
 
             if (!$groupId) {
                 $group = $this->createGroup($testId, $prevGroupId);
-                return $this->createQuestion($group, $questionData);
+                $question = $this->createQuestion($group, $questionData);
+                $group->questions = [$question];
+                return $group;
             }
 
             $group = $this->getGroupById($groupId);
@@ -43,7 +45,8 @@ class GroupQuestionService
             }
 
             $question = $this->createQuestion($group, $questionData);
-            return $question;
+            $group->questions = [$question];
+            return $group;
         });
     }
 
@@ -108,7 +111,7 @@ class GroupQuestionService
             $nextGroup->prevGroup()->associate($group);
             $nextGroup->save();
         }
-        $prevGroup->save();
+        $prevGroup->save();;
         return $group;
     }
 

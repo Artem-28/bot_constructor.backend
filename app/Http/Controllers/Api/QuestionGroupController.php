@@ -8,6 +8,7 @@ use App\Services\GroupQuestionService;
 use App\Transformers\GroupQuestionTransformer;
 use Illuminate\Http\Request;
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 
 class QuestionGroupController extends Controller
 {
@@ -21,10 +22,12 @@ class QuestionGroupController extends Controller
         $this->middleware(['auth:sanctum']);
         $this->groupQuestionService = $groupQuestionService;
     }
-    public function indexQuestion(Request $request, int $testId) {
+    // Получение вопросов для теста
+    public function indexQuestion(Request $request, int $testId): \Illuminate\Http\JsonResponse
+    {
         try {
             $groups = $this->groupQuestionService->getTestQuestions($testId);
-            $resource = new Collection($groups, new GroupQuestionTransformer('questions'));
+            $resource = new Collection($groups, new GroupQuestionTransformer('sortedQuestions'));
             $data = $this->createData($resource);
             return $this->successResponse($data);
 
@@ -41,7 +44,15 @@ class QuestionGroupController extends Controller
             $groupData = $request->only(['prevGroupId', 'groupId']);
             $questionData = $request->only(['type', 'text', 'prevQuestionId']);
 
-            $this->groupQuestionService->createTestQuestion($testId, $groupData, $questionData);
+            $groupQuestion = $this->groupQuestionService
+                ->createTestQuestion($testId, $groupData, $questionData);
+
+            $resource = new Item($groupQuestion, new GroupQuestionTransformer('questions'));
+            $resourceService = $this->groupQuestionService->getResource();
+            $resourceUpdated = new Collection($resourceService['updated'], new GroupQuestionTransformer());
+            $createData = $this->createData($resource);
+            $updateData = $this->createData($resourceUpdated);
+            return $this->successResponse(['questions' => null, 'groups' => null]);
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
