@@ -20,8 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('auth/registration', [\App\Http\Controllers\Api\AuthController::class, 'registration']);
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+Route::post('auth/check_exists', [\App\Http\Controllers\Api\AuthController::class, 'checkExists']);
 Route::patch('auth/change_password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
+
 Route::post('send_code', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
+Route::post('check_code', [\App\Http\Controllers\Api\SendCodeController::class, 'checkCode']);
 
 // Account
 Route::patch('account', [\App\Http\Controllers\Api\AccountController::class, 'update']);

@@ -8,7 +8,6 @@ use League\Fractal\TransformerAbstract;
 class UserTransformer extends TransformerAbstract
 {
     protected array $defaultIncludes = [
-        'account',
         'profile'
     ];
 
@@ -20,12 +19,6 @@ class UserTransformer extends TransformerAbstract
             'phone' => $user->phone,
             'permissions' => $user->permissions,
         ];
-    }
-
-    public function includeAccount(User $user): \League\Fractal\Resource\Item
-    {
-        $account = $user->account;
-        return $this->item($account, new AccountTransformer());
     }
 
     public function includeProfile(User $user): \League\Fractal\Resource\Item

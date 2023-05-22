@@ -47,13 +47,12 @@ class AuthController extends Controller
     public function registration(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $accountData = $request->input('account', []);
-            $profileData = $request->input('profile', []);
             $userData = $request->only(['email', 'password', 'licenseAgreement']);
+            $profileData = $request->input('profile', []);
             $confirmCode = $request->get('code');
 
             if (!$userData['licenseAgreement']) {
-                return $this->errorResponse('Не приняты условия лицинзионного соглашения');
+                return $this->errorResponse('Не приняты условия лицинзионного соглашения', 'access');
             }
 
             $checkCode = $this->confirmationCodeService->checkCode
@@ -64,23 +63,22 @@ class AuthController extends Controller
                 $confirmCode
             );
 
-            if (!$checkCode['live']) {
-                return $this->errorResponse('Срок действия кода подтверждения истек', 404);
+            $liveCheckCode = $checkCode['live'];
+            if (!$liveCheckCode['valid']) {
+                return $this->errorResponse('Срок действия кода подтверждения истек', 'confirm_code');
             }
 
             if (!$checkCode['matches']) {
-                return $this->errorResponse('Код подтверждения введен не верно', 404);
+                return $this->errorResponse('Код подтверждения введен не верно', 'confirm_code');
             }
 
             $userData['email_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
 
-            DB::transaction(function () use ($accountData, $profileData, $userData) {
-
+            DB::transaction(function () use ($profileData, $userData) {
                 $user = $this->userService->create($userData);
-                $account = $this->accountService->create($accountData, $user);
-                $this->accountTypeService->assignTypesToAccount($account, $accountData['types']);
                 $this->profileService->create($profileData, $user);
             });
+
             return $this->successResponse(null, 'Регистрация завершена');
 
         } catch (\Exception $exception) {
@@ -96,7 +94,7 @@ class AuthController extends Controller
         $user = $this->userService->getUserByEmail($data['email']);
 
         if (!$user || ! Auth::attempt($data)) {
-            return $this->errorResponse('Неверный логин или пароль', 401);
+            return $this->errorResponse('Неверный логин или пароль', 'login', 401);
         }
 
         $token = $user->createToken('auth_token', $user->permissions)->plainTextToken;
@@ -125,16 +123,31 @@ class AuthController extends Controller
                 $confirmCode
             );
 
-            if (!$checkCode['live']) {
-                return $this->errorResponse('Срок действия кода подтверждения истек', 404);
+            $liveCheckCode = $checkCode['live'];
+            if (!$liveCheckCode['valid']) {
+                return $this->errorResponse('Срок действия кода подтверждения истек', 'confirm_code');
             }
 
             if (!$checkCode['matches']) {
-                return $this->errorResponse('Код подтверждения введен не верно', 404);
+                return $this->errorResponse('Код подтверждения введен не верно', 'confirm_code');
             }
 
             $this->userService->changePassword($email, $password);
             return $this->successResponse(null, 'Пароль успешно изменен');
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            $this->errorResponse($message);
+        }
+
+    }
+
+    public function checkExists(Request $request) {
+        try {
+            $email = $request->get('email');
+            $isExist = $this->userService->isExistsUserByEmail($email);
+            $data = array('exists' => $isExist);
+            return $this->successResponse($data);
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();

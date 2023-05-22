@@ -27,6 +27,10 @@ class UserService
         return User::where('email', $email)->first();
     }
 
+    public function isExistsUserByEmail(string $email) {
+        return User::where('email', $email)->exists();
+    }
+
     public function getUserByIds(...$ids): Collection
     {
         return User::find($ids);

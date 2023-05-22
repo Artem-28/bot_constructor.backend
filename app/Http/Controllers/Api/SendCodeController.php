@@ -30,8 +30,9 @@ class SendCodeController extends Controller
             $confirmType = $request->get('type');
 
             $checkCode = $this->confirmationCodeService->checkCode(ConfirmationCode::EMAIL_CODE, $confirmType, $email);
+            $checkDelay = $checkCode['delay'];
 
-            if ($checkCode['delay']) {
+            if ($checkDelay['valid']) {
                 $delayValue = $this->confirmationCodeService->delayTimeCode;
                 return $this->errorResponse('Интервал между отправкой должен быть не менее ' . $delayValue . 'сек.', 404);
             }
@@ -40,10 +41,10 @@ class SendCodeController extends Controller
 
             $this->sendEmailService->sendConfirmMessage($confirmType, $email, $code);
 
-            $data = array(
-                'live' => $this->confirmationCodeService->liveTimeCode,
-                'delay' => $this->confirmationCodeService->delayTimeCode,
-            );
+            $liveData = array('valid' => true, 'time' => $this->confirmationCodeService->liveTimeCode);
+            $delayData = array('valid' => true, 'time' => $this->confirmationCodeService->delayTimeCode);
+
+            $data = array('live' => $liveData, 'delay' => $delayData);
 
             return $this->successResponse($data, "Код подтверждения отправлен на email");
 
@@ -53,4 +54,22 @@ class SendCodeController extends Controller
         }
 
     }
+
+    public function checkCode(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $email = $request->get('email');
+            $confirmType = $request->get('type');
+            $code = $request->get('code');
+
+            $data = $this->confirmationCodeService->checkCode(ConfirmationCode::EMAIL_CODE, $confirmType, $email, $code);
+
+            return $this->successResponse($data);
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
+    }
+
 }

@@ -13,11 +13,12 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, DataPreparation;
 
     // Ответ ошибки
-    protected function errorResponse(string $message = '', int $status = 500): \Illuminate\Http\JsonResponse
+    protected function errorResponse(string $message = '', string | null $type = null, int $status = 500): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'success' => false,
-            'message' => $message
+            'message' => $message,
+            'type' => $type,
         ], $status);
     }
 

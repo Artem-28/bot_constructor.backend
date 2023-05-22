@@ -13,7 +13,7 @@ class ConfirmationCodeService
     public function __construct()
     {
         $this->liveTimeCode = 360;
-        $this->delayTimeCode = 360;
+        $this->delayTimeCode = 120;
     }
 
     private function generateCode(int $codeLength): string
@@ -47,22 +47,36 @@ class ConfirmationCodeService
         return null;
     }
 
-    private function checkIsLiveCode(ConfirmationCode $confirmationCode): bool
+    private function checkIsLiveCode(ConfirmationCode $confirmationCode): array
     {
         $updatedDate = $confirmationCode->updated_at;
         $updatedTimestamp = Carbon::parse($updatedDate)->timestamp;
         $nowTimestamp = Carbon::now()->timestamp;
 
-        return  $updatedTimestamp + $this->liveTimeCode > $nowTimestamp;
+        $liveTime = $updatedTimestamp + $this->liveTimeCode - $nowTimestamp;
+        $liveValid = false;
+
+        if ($liveTime > 0) {
+            $liveValid = true;
+        }
+
+        return [ 'valid' => $liveValid, 'time' => $liveTime ];
     }
 
-    private function checkIsDelayCode(ConfirmationCode $confirmationCode): bool
+    private function checkIsDelayCode(ConfirmationCode $confirmationCode): array
     {
         $updatedDate = $confirmationCode->updated_at;
         $updatedTimestamp = Carbon::parse($updatedDate)->timestamp;
         $nowTimestamp = Carbon::now()->timestamp;
 
-        return  $updatedTimestamp + $this->delayTimeCode > $nowTimestamp;
+        $delayTime = $updatedTimestamp + $this->delayTimeCode - $nowTimestamp;
+        $delayValid = false;
+
+        if ($delayTime > 0) {
+            $delayValid = true;
+        }
+
+        return [ 'valid' => $delayValid, 'time' => $delayTime ];
     }
 
     private function getEmailCode($email, $confirmType)
@@ -79,8 +93,8 @@ class ConfirmationCodeService
     {
         $dataCode = $this->getEmailCode($email, $confirmType);
 
-        $live = false;
-        $delay = false;
+        $live = [ 'valid' => false, 'time' => 0];
+        $delay = [ 'valid' => false, 'time' => 0];
         $matches = false;
 
         if ($dataCode) {
