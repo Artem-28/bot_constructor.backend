@@ -37,6 +37,7 @@ class AuthController extends Controller
 
     )
     {
+        $this->middleware(['auth:sanctum'])->only(['authUser']);
         $this->accountService = $accountService;
         $this->accountTypeService = $accountTypeService;
         $this->profileService = $profileService;
@@ -102,7 +103,7 @@ class AuthController extends Controller
 
         $data = array(
             'access_token' => $token,
-            'token_type' => 'bearer',
+            'token_type' => 'Bearer',
             'user' => $this->createData($resource)
         );
         return $this->successResponse($data);
@@ -142,7 +143,8 @@ class AuthController extends Controller
 
     }
 
-    public function checkExists(Request $request) {
+    public function checkExists(Request $request): \Illuminate\Http\JsonResponse
+    {
         try {
             $email = $request->get('email');
             $isExist = $this->userService->isExistsUserByEmail($email);
@@ -151,8 +153,21 @@ class AuthController extends Controller
 
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
-            $this->errorResponse($message);
+            return $this->errorResponse($message);
         }
+    }
 
+    public function authUser(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $resource = new Item($user, new UserTransformer());
+            $data = $this->createData($resource);
+            return $this->successResponse($data);
+
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
+        }
     }
 }

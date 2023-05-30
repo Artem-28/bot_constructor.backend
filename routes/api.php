@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/registration', [\App\Http\Controllers\Api\AuthController::class, 'registration']);
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('auth/check_exists', [\App\Http\Controllers\Api\AuthController::class, 'checkExists']);
+Route::get('auth/user', [\App\Http\Controllers\Api\AuthController::class, 'authUser']);
 Route::patch('auth/change_password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
 
 Route::post('send_code', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
