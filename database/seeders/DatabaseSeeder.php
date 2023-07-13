@@ -14,8 +14,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            UseAccountTypeSeeder::class,
-            UseCategorySeeder::class,
+            UseTariffSeeder::class,
+            UseTariffParamSeeder::class,
+            UseSaleSeeder::class,
+            UseCouponSeeder::class,
         ]);
     }
 }

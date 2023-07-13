@@ -1,0 +1,280 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Enums\EnumTariff;
+use App\Models\Tariff\TariffParam;
+use Illuminate\Database\Seeder;
+
+class UseTariffParamSeeder extends Seeder
+{
+
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = array(
+            [
+                'tariff_code' => EnumTariff::CODE_FREE,
+                'type' => EnumTariff::PARAMS_TYPE_ADMIN,
+                'min' => 0,
+                'max' => 0,
+                'price' => 0,
+                'price_infinity' => 0,
+                'enable' => false,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_FREE,
+                'type' => EnumTariff::PARAMS_TYPE_RESPONDENT,
+                'min' => 50,
+                'max' => 50,
+                'price' => 0,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_FREE,
+                'type' => EnumTariff::PARAMS_TYPE_STORAGE,
+                'min' => 20,
+                'max' => 20,
+                'price' => 0,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_FREE,
+                'type' => EnumTariff::PARAMS_TYPE_SCRIPT,
+                'min' => 1,
+                'max' => 1,
+                'price' => 0,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_FREE,
+                'type' => EnumTariff::PARAMS_TYPE_QUESTION,
+                'min' => 10,
+                'max' => 10,
+                'price' => 0,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_BASE,
+                'type' => EnumTariff::PARAMS_TYPE_ADMIN,
+                'min' => 1,
+                'max' => 1,
+                'price' => 10,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_BASE,
+                'type' => EnumTariff::PARAMS_TYPE_RESPONDENT,
+                'min' => 100,
+                'max' => 100,
+                'price' => 7,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_BASE,
+                'type' => EnumTariff::PARAMS_TYPE_STORAGE,
+                'min' => 40,
+                'max' => 40,
+                'price' => 15,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_BASE,
+                'type' => EnumTariff::PARAMS_TYPE_SCRIPT,
+                'min' => 5,
+                'max' => 5,
+                'price' => 10,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_BASE,
+                'type' => EnumTariff::PARAMS_TYPE_QUESTION,
+                'min' => 100,
+                'max' => 100,
+                'price' => 1,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_STANDARD,
+                'type' => EnumTariff::PARAMS_TYPE_ADMIN,
+                'min' => 5,
+                'max' => 5,
+                'price' => 8,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_STANDARD,
+                'type' => EnumTariff::PARAMS_TYPE_RESPONDENT,
+                'min' => 500,
+                'max' => 500,
+                'price' => 5,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_STANDARD,
+                'type' => EnumTariff::PARAMS_TYPE_STORAGE,
+                'min' => 100,
+                'max' => 100,
+                'price' => 9,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_STANDARD,
+                'type' => EnumTariff::PARAMS_TYPE_SCRIPT,
+                'min' => 20,
+                'max' => 20,
+                'price' => 6,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_STANDARD,
+                'type' => EnumTariff::PARAMS_TYPE_QUESTION,
+                'min' => 0,
+                'max' => 0,
+                'price' => 1000,
+                'price_infinity' => 1000,
+                'enable' => true,
+                'infinity' => true,
+            ],
+
+            [
+                'tariff_code' => EnumTariff::CODE_PREMIUM,
+                'type' => EnumTariff::PARAMS_TYPE_ADMIN,
+                'min' => 10,
+                'max' => 10,
+                'price' => 5,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_PREMIUM,
+                'type' => EnumTariff::PARAMS_TYPE_RESPONDENT,
+                'min' => 1000,
+                'max' => 1000,
+                'price' => 3,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_PREMIUM,
+                'type' => EnumTariff::PARAMS_TYPE_STORAGE,
+                'min' => 500,
+                'max' => 500,
+                'price' => 5,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_PREMIUM,
+                'type' => EnumTariff::PARAMS_TYPE_SCRIPT,
+                'min' => 0,
+                'max' => 0,
+                'price' => 0,
+                'price_infinity' => 1000,
+                'enable' => true,
+                'infinity' => true,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_PREMIUM,
+                'type' => EnumTariff::PARAMS_TYPE_QUESTION,
+                'min' => 0,
+                'max' => 0,
+                'price' => 0,
+                'price_infinity' => 1000,
+                'enable' => true,
+                'infinity' => true,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_SPECIAL,
+                'type' => EnumTariff::PARAMS_TYPE_ADMIN,
+                'min' => 10,
+                'max' => 100,
+                'price' => 3,
+                'price_infinity' => 1000,
+                'enable' => true,
+                'infinity' => true,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_SPECIAL,
+                'type' => EnumTariff::PARAMS_TYPE_RESPONDENT,
+                'min' => 1000,
+                'max' => 10000,
+                'price' => 1,
+                'price_infinity' => 15000,
+                'enable' => true,
+                'infinity' => true,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_SPECIAL,
+                'type' => EnumTariff::PARAMS_TYPE_STORAGE,
+                'min' => 500,
+                'max' => 100000,
+                'price' => 2,
+                'price_infinity' => 0,
+                'enable' => true,
+                'infinity' => false,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_SPECIAL,
+                'type' => EnumTariff::PARAMS_TYPE_SCRIPT,
+                'min' => 0,
+                'max' => 0,
+                'price' => 0,
+                'price_infinity' => 1500,
+                'enable' => true,
+                'infinity' => true,
+            ],
+            [
+                'tariff_code' => EnumTariff::CODE_SPECIAL,
+                'type' => EnumTariff::PARAMS_TYPE_QUESTION,
+                'min' => 0,
+                'max' => 0,
+                'price' => 0,
+                'price_infinity' => 1800,
+                'enable' => true,
+                'infinity' => true,
+            ],
+        );
+
+        TariffParam::truncate();
+
+        foreach ($data as $item) {
+            $param = new TariffParam($item);
+            $param->save();
+        }
+    }
+}

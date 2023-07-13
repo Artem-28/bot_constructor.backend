@@ -24,8 +24,21 @@ Route::post('auth/check_exists', [\App\Http\Controllers\Api\AuthController::clas
 Route::get('auth/user', [\App\Http\Controllers\Api\AuthController::class, 'authUser']);
 Route::patch('auth/change_password', [\App\Http\Controllers\Api\AuthController::class, 'changePassword']);
 
+// Code
 Route::post('send_code', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
 Route::post('check_code', [\App\Http\Controllers\Api\SendCodeController::class, 'checkCode']);
+
+// Tariff
+Route::get('tariffs', [\App\Http\Controllers\Api\TariffController::class, 'index']);
+Route::post('tariffs/calculate_price', [\App\Http\Controllers\Api\TariffController::class, 'calculatePrice']);
+
+// Discount
+Route::get('discounts/coupons', [\App\Http\Controllers\Api\DiscountController::class, 'getCoupons']);
+
+// Project
+Route::post('projects', [\App\Http\Controllers\Api\ProjectController::class, 'store']);
+
+
 
 // Account
 Route::patch('account', [\App\Http\Controllers\Api\AccountController::class, 'update']);
