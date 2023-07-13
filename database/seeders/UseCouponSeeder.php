@@ -6,7 +6,7 @@ use App\Entities\DateTimeInterval;
 use App\Enums\EnumDiscount;
 use App\Enums\EnumPrice;
 use App\Enums\EnumTariff;
-use App\Models\Coupon;
+use App\Models\Discount\Coupon;
 use Illuminate\Database\Seeder;
 
 class UseCouponSeeder extends Seeder

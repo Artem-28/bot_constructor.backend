@@ -3,11 +3,9 @@
 namespace App\Services;
 
 use App\Entities\Price;
-use App\Entities\TariffPeriod;
 use App\Entities\TariffSalePeriod;
-use App\Enums\EnumTariff;
-use App\Models\Tariff;
-use App\Models\TariffParam;
+use App\Models\Tariff\Tariff;
+use App\Models\Tariff\TariffParam;
 use Exception;
 
 class TariffService

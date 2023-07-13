@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Transformers;
-use App\Models\Sale;
-use \League\Fractal\TransformerAbstract;
+use App\Models\Discount\Sale;
+use League\Fractal\TransformerAbstract;
 
 class SaleTransformer extends TransformerAbstract
 {

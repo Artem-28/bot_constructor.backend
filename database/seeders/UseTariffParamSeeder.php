@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\EnumTariff;
-use App\Models\TariffParam;
+use App\Models\Tariff\TariffParam;
 use Illuminate\Database\Seeder;
 
 class UseTariffParamSeeder extends Seeder

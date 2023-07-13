@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Transformers;
-use App\Models\TariffParam;
-use \League\Fractal\TransformerAbstract;
+use App\Models\Tariff\TariffParam;
+use League\Fractal\TransformerAbstract;
 
 class TariffParamTransformer extends TransformerAbstract
 {

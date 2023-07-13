@@ -4,8 +4,8 @@ namespace App\Entities;
 
 use App\Enums\EnumDiscount;
 use App\Enums\EnumPrice;
-use App\Models\Coupon;
-use App\Models\Sale;
+use App\Models\Discount\Coupon;
+use App\Models\Discount\Sale;
 
 class Price
 {

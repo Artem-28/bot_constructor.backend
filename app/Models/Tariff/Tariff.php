@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Tariff;
 
-use App\Enums\EnumDiscount;
+use App\Models\Discount\Sale;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

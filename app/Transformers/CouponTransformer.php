@@ -2,8 +2,8 @@
 
 namespace App\Transformers;
 
-use App\Models\Coupon;
-use \League\Fractal\TransformerAbstract;
+use App\Models\Discount\Coupon;
+use League\Fractal\TransformerAbstract;
 
 class CouponTransformer extends TransformerAbstract
 {

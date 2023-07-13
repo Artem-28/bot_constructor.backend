@@ -2,8 +2,8 @@
 
 namespace App\Transformers;
 use App\Enums\EnumDiscount;
-use App\Models\Sale;
-use App\Models\Tariff;
+use App\Models\Discount\Sale;
+use App\Models\Tariff\Tariff;
 use League\Fractal\TransformerAbstract;
 
 class TariffTransformer extends TransformerAbstract

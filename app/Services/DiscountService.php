@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Coupon;
-use App\Models\Sale;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Models\Discount\Coupon;
+use App\Models\Discount\Sale;
 
 class DiscountService
 {
