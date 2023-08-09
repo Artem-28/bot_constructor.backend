@@ -32,6 +32,11 @@ Route::post('check_code', [\App\Http\Controllers\Api\SendCodeController::class, 
 Route::get('tariffs', [\App\Http\Controllers\Api\TariffController::class, 'index']);
 Route::post('tariffs/calculate_price', [\App\Http\Controllers\Api\TariffController::class, 'calculatePrice']);
 
+// Payment
+Route::post('payments/create', [\App\Http\Controllers\Api\PaymentController::class, 'create']);
+Route::match(['GET', 'POST'], 'payments/callback', [\App\Http\Controllers\Api\PaymentController::class, 'callback'])
+    ->name('payment.callback');
+
 // Discount
 Route::get('discounts/coupons', [\App\Http\Controllers\Api\DiscountController::class, 'getCoupons']);
 
