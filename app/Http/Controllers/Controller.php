@@ -30,9 +30,7 @@ class Controller extends BaseController
         if ($message) {
             $responseData['message'] = $message;
         }
-        if (!empty($data)) {
-            $responseData['data'] = $data;
-        }
+        $responseData['data'] = $data;
 
         return response()->json($responseData, 200);
     }

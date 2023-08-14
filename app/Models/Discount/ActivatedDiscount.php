@@ -3,6 +3,7 @@
 namespace App\Models\Discount;
 
 use App\Models\Project\Project;
+use App\Models\Tariff\TariffProject;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ class ActivatedDiscount extends Model
         'coupon_id',
         'sale_id',
         'user_id',
-        'project_id'
+        'tariff_id'
     ];
 
     // Активированный купон
@@ -37,8 +38,8 @@ class ActivatedDiscount extends Model
     }
 
     // проект к которому применена скидка или купон
-    public function project(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function tariff(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Project::class, 'id', 'project_id');
+        return $this->belongsTo(TariffProject::class, 'id', 'tariff_id');
     }
 }

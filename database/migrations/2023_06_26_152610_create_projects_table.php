@@ -16,7 +16,7 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('tariff_project_id')->nullable();
+            $table->unsignedBigInteger('tariff_id')->nullable();
             $table->string('title');
             $table->timestamps();
 
@@ -25,7 +25,7 @@ class CreateProjectsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('tariff_project_id')
+            $table->foreign('tariff_id')
                 ->references('id')
                 ->on('tariff_projects')
                 ->onDelete('cascade');

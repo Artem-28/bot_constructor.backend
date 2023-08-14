@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\TariffParam
+ * App\Models\Tariff\TariffParam
  *
  * @property int $id
  * @property string $tariff_code
@@ -36,5 +36,10 @@ class TariffParam extends Model
         'price_infinity',
         'infinity',
         'enable'
+    ];
+
+    protected $casts = [
+        'infinity' => 'boolean',
+        'enable' => 'boolean'
     ];
 }

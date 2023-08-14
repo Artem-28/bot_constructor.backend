@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
+use App\Entities\DateTimeInterval;
 use App\Entities\Price;
-use App\Entities\TariffSalePeriod;
+use App\Enums\EnumPayment;
+use App\Enums\EnumTariff;
 use App\Models\Tariff\Tariff;
 use App\Models\Tariff\TariffParam;
+use App\Models\Tariff\TariffProject;
+use App\Models\Tariff\TariffProjectParam;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TariffService
 {
@@ -64,7 +70,9 @@ class TariffService
             unset($relations['sales']);
         }
 
-        return $rootQuery->with($relations)->where('public', true)->get();
+        return $rootQuery->with($relations)
+            ->where('public', true)
+            ->get();
     }
 
     /**
@@ -87,6 +95,35 @@ class TariffService
 
         return $rootQuery->with($relations)
             ->where('public', true)
+            ->find($tariffId);
+    }
+
+    public function getTariffProjectById(int $tariffId, int $userId, ...$relations)
+    {
+        $with = array();
+        $rootQuery = TariffProject::query();
+
+        if (in_array('params', $relations)) {
+            $with[] = 'params';
+        }
+        if (in_array('transaction', $relations)) {
+            $with[] = 'transaction';
+        }
+        if (in_array('project', $relations)) {
+            $with[] = 'project';
+        }
+        if (in_array('tariff', $relations)) {
+            $with[] = 'tariff';
+        }
+        if (array_key_exists('tariff', $relations) && is_array($relations['tariff'])) {
+            $tariffRelations = $relations['tariff'];
+            $with['tariff'] = function ($query) use ($tariffRelations) {
+                $query->with($tariffRelations);
+            };
+        }
+
+        return $rootQuery->with($with)
+            ->where('user_id', '=', $userId)
             ->find($tariffId);
     }
 
@@ -150,8 +187,60 @@ class TariffService
         return $validateParams;
     }
 
-    public function createTariffProject($data)
+    public function createTariffProject(array $data, array $tariffParamsData)
     {
+        return DB::transaction(function () use ($data, $tariffParamsData) {
+            $tariff = new TariffProject($data);
+            $tariff->save();
+            $availableParamTypes = array(
+                EnumTariff::PARAMS_TYPE_ADMIN,
+                EnumTariff::PARAMS_TYPE_QUESTION,
+                EnumTariff::PARAMS_TYPE_RESPONDENT,
+                EnumTariff::PARAMS_TYPE_SCRIPT,
+                EnumTariff::PARAMS_TYPE_STORAGE
+            );
 
+            $params = array();
+
+            foreach ($availableParamTypes as $paramType) {
+                $enable = array_key_exists($paramType, $tariffParamsData);
+                $infinity = $enable && $tariffParamsData[$paramType] === 'infinity';
+                $value = 0;
+                if ($enable && !$infinity) {
+                    $value = $tariffParamsData[$paramType];
+                }
+                $param = new TariffProjectParam([
+                    'type' => $paramType,
+                    'enable' => $enable,
+                    'infinity' => $infinity,
+                    'value' => $value,
+                ]);
+                $params[] = $param;
+            }
+
+            $tariff->params()->saveMany($params);
+            return $tariff;
+        });
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function activateTariff(int $tariffId, int $userId)
+    {
+        $tariff = $this->getTariffProjectById($tariffId, $userId, 'transaction');
+        if (!$tariff) {
+            throw new Exception(__('errors.tariff.activate'));
+        }
+        $available = $tariff->transaction->status === EnumPayment::STATUS_SUCCEEDED && !$tariff->start_at && !$tariff->end_at;
+        Log::info(json_encode(['available' => $tariff->transaction]));
+        if (!$available) {
+            throw new Exception(__('errors.tariff.activate'));
+        }
+        $period = new DateTimeInterval(0, $tariff->period);
+        $tariff->start_at = $period->getStartAt();
+        $tariff->end_at = $period->getEndAt();
+        $tariff->update();
+        return $tariff;
     }
 }

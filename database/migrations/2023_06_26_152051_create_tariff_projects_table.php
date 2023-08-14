@@ -15,16 +15,6 @@ class CreateTariffProjectsTable extends Migration
         EnumTariff::CODE_PREMIUM,
         EnumTariff::CODE_SPECIAL,
     );
-    private array $price_currency_enum = array(
-        EnumPrice::CURRENCY_RUB
-    );
-
-    private array $tariff_period_enum = array(
-        EnumTariff::PERIOD_XS,
-        EnumTariff::PERIOD_S,
-        EnumTariff::PERIOD_L,
-        EnumTariff::PERIOD_XXL,
-    );
     /**
      * Run the migrations.
      *
@@ -34,12 +24,23 @@ class CreateTariffProjectsTable extends Migration
     {
         Schema::create('tariff_projects', function (Blueprint $table) {
             $table->id();
-            $table->float('price');
-            $table->enum('currency', $this->price_currency_enum);
-            $table->enum('period', $this->tariff_period_enum);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('transaction_id')->nullable();
+            $table->enum('tariff_code', $this->tariff_code_enum);
+            $table->integer('period');
             $table->dateTime('start_at')->nullable();
             $table->dateTime('end_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('tariff_code')
+                ->references('code')
+                ->on('tariffs')
+                ->onDelete('cascade');
         });
     }
 

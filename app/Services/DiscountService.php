@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Discount\ActivatedDiscount;
 use App\Models\Discount\Coupon;
 use App\Models\Discount\Sale;
 
@@ -144,5 +145,11 @@ class DiscountService
         }
 
         return $validate;
+    }
+
+    public function activateDiscount(Sale | Coupon $discount, array $params): \Illuminate\Database\Eloquent\Model|bool
+    {
+        $activatedDiscount = new ActivatedDiscount($params);
+        return $discount->activated()->save($activatedDiscount);
     }
 }

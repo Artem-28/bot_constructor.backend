@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 class UserTransformer extends TransformerAbstract
 {
     protected array $defaultIncludes = [
-        'profile'
+//        'profile'
     ];
 
     public function transform(User $user): array
