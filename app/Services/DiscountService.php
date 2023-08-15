@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Discount\ActivatedDiscount;
 use App\Models\Discount\Coupon;
 use App\Models\Discount\Sale;
 
@@ -144,5 +145,20 @@ class DiscountService
         }
 
         return $validate;
+    }
+
+    public function activateDiscount(Sale | Coupon $discount, array $params): \Illuminate\Database\Eloquent\Model|bool
+    {
+        $activatedDiscount = new ActivatedDiscount($params);
+        return $discount->activated()->save($activatedDiscount);
+    }
+
+    public function deactivationTariffDiscount(int $tariffId, int $userId)
+    {
+        $rootQuery = ActivatedDiscount::query()
+            ->where('user_id', $userId)
+            ->where('tariff_id', $tariffId)
+            ->delete();
+        return $rootQuery;
     }
 }

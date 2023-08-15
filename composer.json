@@ -11,7 +11,8 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "league/fractal": "^0.20.1"
+        "league/fractal": "^0.20.1",
+        "yoomoney/yookassa-sdk-php": "^2.9"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -20,4 +20,10 @@ class EnumTariff
     const PERIOD_S = 31;
     const PERIOD_L = 183;
     const PERIOD_XXL = 365;
+
+    const STATUS_NOT_USED = 'not_used';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+
+    const STATUS_PENDING = 'pending';
 }

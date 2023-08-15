@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use \App\Enums\EnumTariff;
 
-class CreateProjectParamsTable extends Migration
+class CreateTariffProjectParamsTable extends Migration
 {
     private array $tariff_param_type_enum = array(
         EnumTariff::PARAMS_TYPE_ADMIN,
@@ -21,16 +21,16 @@ class CreateProjectParamsTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_params', function (Blueprint $table) {
+        Schema::create('tariff_project_params', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tariff_project_id');
+            $table->unsignedBigInteger('tariff_id');
             $table->enum('type', $this->tariff_param_type_enum);
             $table->integer('value')->nullable();
             $table->boolean('enable');
             $table->boolean('infinity');
             $table->timestamps();
 
-            $table->foreign('tariff_project_id')
+            $table->foreign('tariff_id')
                 ->references('id')
                 ->on('tariff_projects')
                 ->onDelete('cascade');
@@ -44,6 +44,6 @@ class CreateProjectParamsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_params');
+        Schema::dropIfExists('tariff_project_params');
     }
 }

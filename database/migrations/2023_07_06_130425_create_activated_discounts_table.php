@@ -18,7 +18,7 @@ class CreateActivatedDiscountsTable extends Migration
             $table->unsignedBigInteger('sale_id')->nullable();
             $table->unsignedBigInteger('coupon_id')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('tariff_id');
             $table->timestamps();
 
             $table->foreign('coupon_id')
@@ -36,9 +36,9 @@ class CreateActivatedDiscountsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('project_id')
+            $table->foreign('tariff_id')
                 ->references('id')
-                ->on('projects')
+                ->on('tariff_projects')
                 ->onDelete('cascade');
         });
     }

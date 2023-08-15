@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Tariff
+ * App\Models\Tariff\Tariff
  *
  * @property int $id
  * @property string $code

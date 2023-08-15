@@ -30,12 +30,19 @@ Route::post('check_code', [\App\Http\Controllers\Api\SendCodeController::class, 
 
 // Tariff
 Route::get('tariffs', [\App\Http\Controllers\Api\TariffController::class, 'index']);
+Route::post('tariffs/tariff_project', [\App\Http\Controllers\Api\TariffController::class, 'createTariffProject']);
 Route::post('tariffs/calculate_price', [\App\Http\Controllers\Api\TariffController::class, 'calculatePrice']);
+
+// Payment
+Route::post('payments/tariff', [\App\Http\Controllers\Api\PaymentController::class, 'paymentTariff']);
+Route::post('payments/callback', [\App\Http\Controllers\Api\PaymentController::class, 'callback'])
+    ->name('payment.callback');
 
 // Discount
 Route::get('discounts/coupons', [\App\Http\Controllers\Api\DiscountController::class, 'getCoupons']);
 
 // Project
+Route::get('projects', [\App\Http\Controllers\Api\ProjectController::class, 'index']);
 Route::post('projects', [\App\Http\Controllers\Api\ProjectController::class, 'store']);
 
 

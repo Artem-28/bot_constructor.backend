@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UseTariffParamSeeder::class,
             UseSaleSeeder::class,
             UseCouponSeeder::class,
+            UseUserSeeder::class,
         ]);
     }
 }
