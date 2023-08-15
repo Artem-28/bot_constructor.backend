@@ -33,9 +33,10 @@ class ProjectController extends Controller
     {
         try {
             $user = auth()->user();
-            $projects = $this->projectService->getProjects($user->id);
+            $relations = array('tariff', 'params');
+            $projects = $this->projectService->getProjects($user->id, ...$relations);
 
-            $resource = new Collection($projects, new ProjectTransformer());
+            $resource = new Collection($projects, new ProjectTransformer(...$relations));
 
             $data = $this->createData($resource);
             return $this->successResponse($data);

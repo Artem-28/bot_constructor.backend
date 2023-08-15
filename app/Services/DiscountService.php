@@ -152,4 +152,13 @@ class DiscountService
         $activatedDiscount = new ActivatedDiscount($params);
         return $discount->activated()->save($activatedDiscount);
     }
+
+    public function deactivationTariffDiscount(int $tariffId, int $userId)
+    {
+        $rootQuery = ActivatedDiscount::query()
+            ->where('user_id', $userId)
+            ->where('tariff_id', $tariffId)
+            ->delete();
+        return $rootQuery;
+    }
 }

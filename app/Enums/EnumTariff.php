@@ -24,4 +24,6 @@ class EnumTariff
     const STATUS_NOT_USED = 'not_used';
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
+
+    const STATUS_PENDING = 'pending';
 }

@@ -3,6 +3,7 @@
 namespace App\Models\Project;
 
 use App\Models\Tariff\TariffProject;
+use App\Models\Tariff\TariffProjectParam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,11 +32,16 @@ class Project extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'datetime',
+        'created_at' => 'timestamp',
     ];
 
     public function tariff(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TariffProject::class, 'tariff_id', 'id');
+    }
+
+    public function params(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TariffProjectParam::class, 'tariff_id', 'tariff_id');
     }
 }

@@ -160,7 +160,22 @@ class PaymentController extends Controller
     {
         try {
             $this->paymentService->paymentEventHandle(function (string $status, Metadata $metadata, Transaction $transaction) {
-
+                Log::info($status);
+                Log::info(json_encode($metadata));
+                // Обработак отмены платежа
+                if ($status === EnumPayment::STATUS_CANCELED) {
+                    $this->discountService->deactivationTariffDiscount($metadata->project_id, $metadata->user_id);
+                    $data = array('tariff' => null);
+                    $this->projectService->updateProject($metadata->project_id, $metadata->user_id, $data);
+                    return;
+                }
+                // Обработка оплаты тарифа в статусе ожидает подтверждения
+                if ($status === EnumPayment::STATUS_WAITING_FOR_CAPTURE && $transaction->type === EnumPayment::TRANSACTION_TYPE_TARIFF) {
+                    $tariffProject = $this->tariffService->getTariffProjectById($metadata->product_id, $metadata->user_id);
+                    $data = array('tariff' => $tariffProject);
+                    $this->projectService->updateProject($metadata->project_id, $metadata->user_id, $data);
+                    return;
+                }
                 // Обработка успешной оплаты тарифа
                 if ($status === EnumPayment::STATUS_SUCCEEDED && $transaction->type === EnumPayment::TRANSACTION_TYPE_TARIFF) {
                     // Активация тарифа
@@ -168,8 +183,8 @@ class PaymentController extends Controller
                     $data = array('tariff' => $tariffProject);
                     // Присоединение тарифа к проекту
                     $this->projectService->updateProject($metadata->project_id, $metadata->user_id, $data);
+                    return;
                 }
-                Log::info($status);
             });
 
         } catch (\Exception $exception) {

@@ -233,7 +233,6 @@ class TariffService
             throw new Exception(__('errors.tariff.activate'));
         }
         $available = $tariff->transaction->status === EnumPayment::STATUS_SUCCEEDED && !$tariff->start_at && !$tariff->end_at;
-        Log::info(json_encode(['available' => $tariff->transaction]));
         if (!$available) {
             throw new Exception(__('errors.tariff.activate'));
         }

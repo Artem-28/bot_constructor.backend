@@ -23,4 +23,17 @@ class ProjectTransformer extends TransformerAbstract
             'createdAt' => $project->created_at,
         ];
     }
+
+    public function includeTariff(Project $project): ?\League\Fractal\Resource\Item
+    {
+        $tariff = $project->tariff;
+        if (!$tariff) return null;
+        return $this->item($tariff, new TariffProjectTransformer());
+    }
+
+    public function includeParams(Project $project)
+    {
+        $params = $project->params;
+        return $this->collection($params, new TariffProjectParamTransformer());
+    }
 }

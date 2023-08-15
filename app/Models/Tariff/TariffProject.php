@@ -69,10 +69,27 @@ class TariffProject extends Model
         return $this->belongsTo(Tariff::class,'tariff_code', 'code');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getStatusAttribute(): string
     {
-        if (!$this->start_at) return EnumTariff::STATUS_NOT_USED;
-        return EnumTariff::STATUS_ACTIVE;
+        $startDate = new \DateTime($this->start_at);
+        $endDate = new \DateTime($this->end_at);
+        $currentDate = new \DateTime();
+        $validStartDate = $startDate->getTimestamp() < $currentDate->getTimestamp();
+        $validEndDate = $endDate->getTimestamp() > $currentDate->getTimestamp();
+
+        if ($validEndDate && $validStartDate) {
+            return EnumTariff::STATUS_ACTIVE;
+        }
+        if ($this->transaction->status === EnumPayment::STATUS_CREATED && !$this->start_at) {
+            return EnumTariff::STATUS_NOT_USED;
+        }
+        if ($this->transaction->status === EnumPayment::STATUS_WAITING_FOR_CAPTURE) {
+            return EnumTariff::STATUS_PENDING;
+        }
+        return EnumTariff::STATUS_INACTIVE;
     }
 
     public function paramsToArray(): array

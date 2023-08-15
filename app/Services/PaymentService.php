@@ -57,7 +57,7 @@ class PaymentService
         $paymentData = array(
             'amount' => $amount,
             'confirmation' => $confirmation,
-            'capture' => true, // отключить подтверждение платежа в yookassa
+            'capture' => false, // отключить подтверждение платежа в yookassa
             'description' => $transaction->type,
             'metadata' => $metadata,
         );
